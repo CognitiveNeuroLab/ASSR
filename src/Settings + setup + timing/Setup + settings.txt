@@ -1,0 +1,8 @@
+volume at 0.35 using in ear earphones - volume is ~74 dB
+
+using presentation V20.1
+
+Trigger to first stim 12 ms
+ASSR40_900 - 25ms between stim
+ASSR16_500 - 63ms between stim
+ASSR40_500 - 25ms between stim

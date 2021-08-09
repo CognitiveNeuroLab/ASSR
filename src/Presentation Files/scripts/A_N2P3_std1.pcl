@@ -1,0 +1,135 @@
+###### Set up paradigm ###### 
+
+#Project\ directory
+string direc = "C:\\Users\\PRESENTATION\\Desktop\\Active Projects\\A_V_N2P3_version2\\";
+
+###### Make some adjustments to stimulus timing, primarily to adjust for long scheduling delay in sound card ######
+double period = display_device.refresh_period();
+
+# This value should be greater than your actual audio scheduling delay
+double max_scheduling_delay = 60;
+# This is the empirically measured latency for the display device used
+double display_device_latency = 19;
+# This is the empirically measured latency for the sound card used
+double sound_card_latency = 9.5;
+# This is any additional delay from the start of the vertical refresh of the picture
+# to the sound stimulus onset
+double additional_sound_delay = 0;
+
+# calculate a predicted actual time of picture based on the first picture
+# in the trial and the refresh period that is at least the audio scheduling delay
+int refresh_period_time = int(max_scheduling_delay / period) + 1;
+double expected_picture_time = refresh_period_time * period;
+a_aud1_se.set_time( int( expected_picture_time + display_device_latency + additional_sound_delay - sound_card_latency ) );
+a_aud2_se.set_time( int( expected_picture_time + display_device_latency + additional_sound_delay - sound_card_latency ) );
+a_aud3_se.set_time( int( expected_picture_time + display_device_latency + additional_sound_delay - sound_card_latency ) );
+a_av1_se.set_time( int( expected_picture_time + display_device_latency + additional_sound_delay - sound_card_latency ) );
+a_av2_se.set_time( int( expected_picture_time + display_device_latency + additional_sound_delay - sound_card_latency ) );
+a_av3_se.set_time( int( expected_picture_time + display_device_latency + additional_sound_delay - sound_card_latency ) );
+# request the picture half a refresh period before the actual time to make sure it appears on the predicted refresh
+vis1_se.set_time( int( expected_picture_time - period / 2 ) );
+vis2_se.set_time( int( expected_picture_time - period / 2 ) );
+vis3_se.set_time( int( expected_picture_time - period / 2 ) );
+v_aud1_se.set_time( int( expected_picture_time - period / 2 ) );
+v_aud2_se.set_time( int( expected_picture_time - period / 2 ) );
+v_aud3_se.set_time( int( expected_picture_time - period / 2 ) );
+v_av1_se.set_time( int( expected_picture_time - period / 2 ) );
+v_av2_se.set_time( int( expected_picture_time - period / 2 ) );
+v_av3_se.set_time( int( expected_picture_time - period / 2 ) );
+
+#Define parameters
+int num_stim = 9;
+int num_trials = 54;
+
+#Randomly generate condition order 
+#array <string> conds[num_stim] = { "A1", "A2", "A3", "V1", "V2", "V3", "AV1", "AV2", "AV3" };
+#array <string> conds[num_stim] = { "V1", "V2", "V3", "V1", "V2", "V3", "V1", "V2", "V3" };
+array <string> conds[num_stim] = { "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1", "A1" };
+#array <string> conds[num_stim] = { "AV1", "AV1", "AV1", "AV1", "AV1", "AV1", "AV1", "AV1", "AV1" };
+array <string> cond_order[num_trials];
+loop int i = 1 until i > num_trials begin
+   conds.shuffle();
+	loop int j = 1 until j > num_stim begin
+		cond_order[i+j-1] = conds[j];
+		j = j + 1;
+	end;
+   i = i + num_stim;
+end;
+
+#Randomly generate ISI order 
+#Use 8ms under ISI preferred to make sure screen refresh rate (60Hz) is always within this time and a delay in trial presentation doesn't happen - same for visual stimulus also
+#array <int> ISIs_1[num_stim] = { 4000, 6000, 8000, 10000, 5000, 7000, 9000, 11000, 12000 };  
+#array <int> ISIs_1[num_stim] = { 995, 995, 995, 995, 995, 995, 995, 995, 995 }; 
+
+array <int> ISIs_1[num_stim] = { 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000 }; 
+
+#array <int> ISIs_2[num_stim] = { 4992, 6992, 8992, 10992 };
+array <int> ISI_order[num_trials];
+loop int i = 1 until i > num_trials begin
+	ISIs_1.shuffle();
+	loop int j = 1 until j > num_stim begin
+		ISI_order[i+j-1] = ISIs_1[j];
+		j = j + 1;
+	end;
+#	ISIs_2.shuffle();
+#	loop int j = 1 until j > num_stim begin
+#		ISI_order[i+j+3] = ISIs_2[j];
+#		j = j + 1;
+#	end;
+#  i = i + num_stim*2;
+	i = i + num_stim;
+end;
+
+#Output trial order to text file
+output_file out = new output_file; 
+out.open( logfile.subject() + "-trial_order.txt" ); 
+out.print( "Trial\tCond\tISI\n" );
+loop int i = 1 until i > num_trials begin
+	out.print( string(i) + "\t" + cond_order[i] + "\t" + string(ISI_order[i]) + "\n" ); 
+	i = i + 1;
+end;
+out.close();
+
+#Present start tirals
+trial_start.present();
+default.present();
+
+#Loop through trials
+int i;
+loop 
+	i = 1 
+until 
+	i > num_trials 
+begin
+
+	#Present trial
+	if cond_order[i] == "A1" then
+		trial_aud1.present();
+	elseif cond_order[i] == "A2" then
+		trial_aud2.present();	
+	elseif cond_order[i] == "A3" then
+		trial_aud3.present();
+	elseif cond_order[i] == "V1" then
+		trial_vis1.present();
+	elseif cond_order[i] == "V2" then
+		trial_vis2.present();	
+	elseif cond_order[i] == "V3" then
+		trial_vis3.present();	
+	elseif cond_order[i] == "AV1" then
+		trial_av1.present();
+	elseif cond_order[i] == "AV2" then
+		trial_av2.present();
+	elseif cond_order[i] == "AV3" then
+		trial_av3.present();		
+	end;
+		
+	#Present ISI
+	trial_isi.set_duration( ISI_order[i] );
+	trial_isi.present();
+
+	i = i + 1;
+	
+end;
+
+#Present end tirals
+trial_end_block.present();

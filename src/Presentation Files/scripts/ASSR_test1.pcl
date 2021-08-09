@@ -1,0 +1,63 @@
+# RETT ASSR: 
+
+string direc = "C://Users//Presentation//Desktop//Active Projects//OlgaS_ASSR//"
+#string direc = "C://Users//Presentation//Projects//Tufi_Rett//rett_mm//";  
+
+# Set parameters:
+;int num_trials = 150; # number of trials
+
+# array to be filled from pre-made sequence text files
+array<int> trl_order[num_trials]; 
+
+# Begin:
+#Randomly generate ISI order 
+#Use 8ms under ISI preferred to make sure screen refresh rate (60Hz) is always within this time and a delay in trial presentation doesn't happen - same for visual stimulus also
+int num_stim = 16;
+array <int> ISIs_1[num_stim] = {500, 520, 540, 560, 580, 600, 620, 640, 660, 680, 700, 720, 740, 760, 780, 800}; 
+
+array <int> ISI_order[num_trials];
+loop int i = 1 until i > num_trials begin
+	ISIs_1.shuffle();
+	loop int j = 1 until j > num_stim begin
+		ISI_order[i] = ISIs_1[j];
+		j = j + 1;
+	end;
+#	ISIs_2.shuffle();
+#	loop int j = 1 until j > num_stim begin
+#		ISI_order[i+j+3] = ISIs_2[j];
+#		j = j + 1;
+#	end;
+#  i = i + num_stim*2;
+	i = i + num_stim;
+end;
+
+
+#Loop through trials
+int i;
+loop 
+	i = 1 until i > num_trials 
+begin
+
+	#Present trial
+	#deviant_trial.present();
+	trial_assr40.present();
+		
+	#Present ISI
+	trial_isi.set_duration(ISI_order[i] );
+	trial_isi.present();
+
+	i = i + 1;
+	
+end;
+
+#order_in.close();
+#
+
+# add a pause at the beginning of each block
+#nothing_trial.present();
+	
+end_block_trial.present();
+	
+
+
+
