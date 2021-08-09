@@ -1,3 +1,4 @@
+  
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
@@ -66,8 +67,10 @@ You can see [the rest of the paradigm settings here](https://github.com/Cognitiv
 
 
 ### Readme files
-All readme files are .txt files and use the following structure: 
-~~~~---***run in presentation V 20.1***---~~~
+All readme files are .txt files and use the following structure:  
+  
+```  
+*run in presentation V 20.1*
 
 Participant ID: 	
 Patient/control
@@ -86,7 +89,7 @@ Notes: general notes on paradigm
 2- 16_500 order - info on this block 
 3- 27-500 order - info on this block
 4- 40_900 order - info on this block 
-
+```
 
 ## License
 
